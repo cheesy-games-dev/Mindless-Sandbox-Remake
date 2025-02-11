@@ -87,7 +87,7 @@ Transform:
   m_GameObject: {fileID: 2718672768786232279}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.2, z: 0.1}
+  m_LocalPosition: {x: -0, y: 0.2, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -482,24 +482,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 9
+  sensitivity: 50
+  moveSpeed: 3000
+  maxSpeed: 10
+  counterMovement: 0.5
+  maxSlopeAngle: 35
+  slideForce: 400
+  slideCounterMovement: 0.2
+  jumpForce: 550
+  wallRunGravity: 1
+  initialForce: 20
+  escapeForce: 600
+  wallRunRotateAmount: 10
+  isWallRunning: 0
+  useWallrunning: 1
+  grounded: 0
+  crouching: 0
   moveCamera: {fileID: 9174558191166673681}
   playerCam: {fileID: 5920544244713255366}
   playerHead: {fileID: 6667635768286737543}
   orientation: {fileID: 1414663697875482955}
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 9
   controller: {fileID: 4042570748095639748}
   animator: {fileID: 2164267279650460593}
-  sensitivity: 50
-  moveSpeed: 4500
-  maxSpeed: 10
-  counterMovement: 0.3
-  maxSlopeAngle: 40
-  jumpForce: 550
-  grounded: 0
-  slideForce: 400
-  slideCounterMovement: 0.2
 --- !u!1001 &967738380308906479
 PrefabInstance:
   m_ObjectHideFlags: 0
