@@ -125,17 +125,18 @@ namespace MindlessSandbox
             readyToJump = true;
             tempHeight = bodyCollider.height;
             moveCamera.Head = playerCam;
-            NetworkObject.Spawn();
+            if(!IsSpawned) NetworkObject.Spawn();
         }
 
         private void FixedUpdate()
         {
             if (!IsOwner) return;
-            MovementServerRpc(controller.Move, controller.Jump, controller.Crouch);
+            Movement(controller.Move, controller.Jump, controller.Crouch);
         }
 
         private void Update()
         {
+            NetworkObject.NetworkTransforms[0].AuthorityMode = Unity.Netcode.Components.NetworkTransform.AuthorityModes.Server;
             if (!IsOwner || Cursor.lockState != CursorLockMode.Locked)
             {
                 x = 0;
@@ -145,7 +146,7 @@ namespace MindlessSandbox
             }
             ControlAnimator();
             MyInput();
-            LookRpc(controller.Look);
+            Look(controller.Look);
         }
 
         private void ControlAnimator()
@@ -203,8 +204,7 @@ namespace MindlessSandbox
             transform.position = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
         }
 
-        [Rpc(SendTo.Everyone)]
-        private void LookRpc(Vector2 serverLook)
+        private void Look(Vector2 serverLook)
         {
             float mouseX = 0;
             float mouseY = 0;
@@ -223,8 +223,7 @@ namespace MindlessSandbox
             playerHead.localRotation = Quaternion.Euler(xRotation, 0, 0);
         }
 
-        [ServerRpc]
-        private void MovementServerRpc(Vector2 serverMove, bool serverJump, bool serverCrouch)
+        private void Movement(Vector2 serverMove, bool serverJump, bool serverCrouch)
         {
             float x = serverMove.x;
             float y = serverMove.y;
