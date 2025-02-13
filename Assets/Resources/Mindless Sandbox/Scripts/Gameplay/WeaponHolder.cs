@@ -23,7 +23,7 @@ public class ItemHolder : NetworkBehaviour
             weaponsPivot = GetComponent<Transform>();
         }
         yield return new WaitForSeconds(delay);
-        SelectWeaponServerRpc();
+        if (IsOwner) SelectWeaponServerRpc();
     }
 
     // Update is called once per frame

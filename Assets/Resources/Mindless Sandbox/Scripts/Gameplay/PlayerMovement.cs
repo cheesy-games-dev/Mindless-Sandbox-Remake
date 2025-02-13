@@ -9,6 +9,7 @@ namespace MindlessSandbox
     // Some stupid rigidbody based movement by Dani
 
     using System;
+    using Unity.Netcode.Components;
     using UnityEngine;
 
     public class PlayerMovement : NetworkBehaviour
@@ -69,15 +70,10 @@ namespace MindlessSandbox
 
         [Header("Collisions")]
         [Tooltip("a bool to check if the player is on the ground.")]
-        public bool grounded;
+        public bool grounded = false;
         [Tooltip("a bool to check if the player is currently crouching.")]
         public bool crouching;
-        private bool surfing;
         private bool cancellingGrounded;
-        private bool cancellingSurf;
-        private bool cancellingWall;
-        private bool onWall;
-        private bool cancelling;
 
         #endregion
 
@@ -85,7 +81,7 @@ namespace MindlessSandbox
         [Header("Mindless Exclusive")]
         public MoveCamera moveCamera;
         public Transform playerCam;
-        public Transform playerHead;
+        public NetworkTransform playerHead;
         public Transform orientation;
         public MindlessControllerManager controller;
         public Animator animator;
@@ -130,13 +126,14 @@ namespace MindlessSandbox
 
         private void FixedUpdate()
         {
+            moveCamera.gameObject.SetActive(IsOwner);
             if (!IsOwner) return;
-            Movement(controller.Move, controller.Jump, controller.Crouch);
+            MovementServerRpc(controller.Move, controller.Jump, controller.Crouch);
         }
 
         private void Update()
         {
-            NetworkObject.NetworkTransforms[0].AuthorityMode = Unity.Netcode.Components.NetworkTransform.AuthorityModes.Server;
+            NetworkObject.NetworkTransforms[0].AuthorityMode = NetworkTransform.AuthorityModes.Owner;
             if (!IsOwner || Cursor.lockState != CursorLockMode.Locked)
             {
                 x = 0;
@@ -144,22 +141,23 @@ namespace MindlessSandbox
                 jumping = false;
                 return;
             }
-            ControlAnimator();
+            ControlAnimatorServerRpc(grounded, crouching, controller.Move.magnitude);
             MyInput();
             Look(controller.Look);
         }
 
-        private void ControlAnimator()
+        [ServerRpc]
+        private void ControlAnimatorServerRpc(bool grounded, bool crouching, float moveMagnitude)
         {
             if (!animator) return;
 
             // Animation
-            if (IsOwner)
+            if (IsServer)
             {
                 animator.speed = 1;
                 animator.SetBool("Fall", grounded);
                 animator.SetFloat("Crouch", crouching ? 1 : 0);
-                animator.SetFloat("Move", controller.Move.magnitude);
+                animator.SetFloat("Move", moveMagnitude);
             }
         }
 
@@ -220,16 +218,26 @@ namespace MindlessSandbox
 
             //Perform the rotations
             transform.Rotate(Vector3.up * mouseX);
-            playerHead.localRotation = Quaternion.Euler(xRotation, 0, 0);
+            playerHead.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         }
 
-        private void Movement(Vector2 serverMove, bool serverJump, bool serverCrouch)
+        [ServerRpc]
+        private void MovementServerRpc(Vector2 serverMove, bool serverJump, bool serverCrouch)
         {
+            if (!IsServer) return;
             float x = serverMove.x;
             float y = serverMove.y;
             bool jumping = serverJump;
             bool crouching = serverCrouch;
 
+            x = Mathf.Clamp(x, -1, 1);
+            y = Mathf.Clamp(y, -1, 1);
+            MovementRpc(x, y, jumping, crouching);
+        }
+
+        [Rpc(SendTo.Owner)]
+        private void MovementRpc(float x, float y, bool jumping, bool crouching)
+        {
             //Extra gravity
             rb.AddForce(Vector3.down * Time.deltaTime * 10);
 
@@ -241,7 +249,7 @@ namespace MindlessSandbox
             CounterMovement(x, y, mag);
 
             //If holding jump && ready to jump, then jump
-            if (readyToJump && jumping) Jump();
+            if (readyToJump && jumping) JumpServerRpc();
 
             //Set max speed
             float maxSpeed = this.maxSpeed;
@@ -270,14 +278,15 @@ namespace MindlessSandbox
             }
 
             // Movement while sliding
-            if (grounded && crouching) multiplierV = 0f;
+            if (grounded && crouching) multiplier = 0.4f;
 
             //Apply forces to move player
             rb.AddForce(orientation.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
             rb.AddForce(orientation.transform.right * x * moveSpeed * Time.deltaTime * multiplier);
         }
 
-        private void Jump()
+        [ServerRpc(RequireOwnership = false)]
+        private void JumpServerRpc()
         {
             if (grounded && readyToJump)
             {

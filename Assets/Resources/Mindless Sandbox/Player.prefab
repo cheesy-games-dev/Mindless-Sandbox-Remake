@@ -500,7 +500,8 @@ MonoBehaviour:
   wallRunRotateAmount: 10
   isWallRunning: 0
   useWallrunning: 1
-  grounded: 0
+  grounded:
+    m_InternalValue: 0
   crouching: 0
   moveCamera: {fileID: 9174558191166673681}
   playerCam: {fileID: 5920544244713255366}
@@ -610,6 +611,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3b93390081da2414ba4d921f6c599586, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2164267279650460593}
+    - targetCorrespondingSourceObject: {fileID: -1781356600409242780, guid: 3b93390081da2414ba4d921f6c599586, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7076367094205024590}
   m_SourcePrefab: {fileID: 100100000, guid: 3b93390081da2414ba4d921f6c599586, type: 3}
 --- !u!1 &121440217975372990 stripped
 GameObject:
@@ -663,6 +667,47 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -3321919801592875672, guid: 3b93390081da2414ba4d921f6c599586, type: 3}
   m_PrefabInstance: {fileID: 967738380308906479}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7649717399404167819 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -1781356600409242780, guid: 3b93390081da2414ba4d921f6c599586, type: 3}
+  m_PrefabInstance: {fileID: 967738380308906479}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7076367094205024590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7649717399404167819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AuthorityMode: 1
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 0
+  SyncPositionY: 0
+  SyncPositionZ: 0
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1001 &2505992407702969185
 PrefabInstance:
   m_ObjectHideFlags: 0
